@@ -12,22 +12,43 @@ import java.time.YearMonth;
  * @author ACER
  */
 public class FramePerhitunganHari extends javax.swing.JFrame {
-    
-    void hitungBulan(){
-          String bulan = (String) comboBoxBulan.getSelectedItem();
+
+    void hitungBulan() {
+        String bulan = (String) comboBoxBulan.getSelectedItem();
         int tahun = (Integer) spinnerTahun.getValue();
         Month bulanTerpilih = Month.valueOf(bulan.toUpperCase());
         YearMonth yearMonth = YearMonth.of(tahun, bulanTerpilih);
         int jumlahHari = yearMonth.lengthOfMonth();
-        String hasil = "Jumlah hari: " + jumlahHari;
+
+        // Menambahkan informasi hari pertama dan terakhir
+        LocalDate hariPertama = yearMonth.atDay(1); // Hari pertama bulan
+        LocalDate hariTerakhir = yearMonth.atEndOfMonth(); // Hari terakhir bulan
+
+        String hasil = "Jumlah hari: " + jumlahHari + "\n";
+        hasil += "Hari pertama bulan " + bulan + " adalah " + hariPertama.getDayOfWeek() + ", " + hariPertama + "\n";
+        hasil += "Hari terakhir bulan " + bulan + " adalah " + hariTerakhir.getDayOfWeek() + ", " + hariTerakhir;
+
         if (isLeapYear(tahun)) {
             hasil += "\nTahun " + tahun + " adalah tahun kabisat.";
         } else {
             hasil += "\nTahun " + tahun + " bukan tahun kabisat.";
         }
 
-        textAreaHasil.setText(hasil);// TODO add your handling code here:
+        // Mengambil tanggal dari jCalendar1 yang dipilih
+        LocalDate tanggalDipilih = jCalendar1.getDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+
+        // Mengambil tanggal pertama bulan dan tahun yang dipilih dari ComboBox dan Spinner
+        LocalDate tanggalPertamaBulan = yearMonth.atDay(1); // Tanggal pertama bulan tersebut
+
+        // Menghitung selisih hari antara tanggal yang dipilih dan tanggal pertama bulan yang dipilih
+        long selisihHari = java.time.temporal.ChronoUnit.DAYS.between(tanggalPertamaBulan, tanggalDipilih);
+
+        // Menampilkan hasil
+        hasil += "\n\nSelisih hari antara tanggal pertama bulan " + bulan + " (" + tanggalPertamaBulan + ") dan tanggal yang dipilih (" + tanggalDipilih + ") adalah: " + Math.abs(selisihHari) + " hari.";
+
+        textAreaHasil.setText(hasil); // Menampilkan hasil di TextArea
     }
+// TODO add your handling code here:
 
     public boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -141,7 +162,7 @@ public class FramePerhitunganHari extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void spinnerTahunStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinnerTahunStateChanged
-    hitungBulan();           // TODO add your handling code here:
+        hitungBulan();           // TODO add your handling code here:
     }//GEN-LAST:event_spinnerTahunStateChanged
 
     /**
